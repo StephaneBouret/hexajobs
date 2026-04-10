@@ -14,6 +14,16 @@ use App\Core\Router;
                 <li class="nav-item">
                     <a class="nav-link <?= Router::isActiveRoute('/') ? 'active' : '' ?>" href="/">Accueil</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= Router::isActiveRoute('/offres') ? 'active' : '' ?>" href="/offres">
+                        Offres
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= Router::isActiveRoute('/entreprises') ? 'active' : '' ?>" href="/entreprises">
+                        Entreprises
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

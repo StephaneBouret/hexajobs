@@ -2,9 +2,19 @@
 
 declare(strict_types=1);
 
+use App\Controllers\CompanyController;
 use App\Controllers\HomeController;
+use App\Controllers\OfferController;
 
 return [
     // Home
-    ['GET',  '/',                          [HomeController::class, 'index']],
+    ['GET', '/',                          [HomeController::class, 'index']],
+
+    // Offres
+    ['GET', '/offres',                    [OfferController::class, 'index']],
+    ['GET', '/offres/{slug}',             [OfferController::class, 'show']],
+
+    // Entreprises
+    ['GET', '/entreprises',               [CompanyController::class, 'index']],
+    ['GET', '/entreprises/{slug}',        [CompanyController::class, 'show']],
 ];

@@ -1,0 +1,10 @@
+#topCompaniesCarousel .carousel-indicators [data-bs-target] {
+    width: 30px;
+    height: 3px;
+    background-color: #0d6efd;
+    opacity: .5;
+}
+
+#topCompaniesCarousel .carousel-indicators .active {
+    opacity: 1;
+}
