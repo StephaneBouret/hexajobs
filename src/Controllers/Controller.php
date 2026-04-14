@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-// use App\Core\Csrf;
-// use App\Service\AuthService;
+use App\Core\Csrf;
+use App\Service\AuthService;
 
 abstract class Controller
 {
-    // protected ?AuthService $auth = null;
+    protected ?AuthService $auth = null;
 
-    // private function auth(): AuthService
-    // {
-    //     if ($this->auth === null) {
-    //         $this->auth = new AuthService();
-    //     }
-    //     return $this->auth;
-    // }
+    private function auth(): AuthService
+    {
+        if ($this->auth === null) {
+            $this->auth = new AuthService();
+        }
+        return $this->auth;
+    }
 
     protected function render(string $view, array $params = [], string $layout = 'layout/base'): void
     {
@@ -100,73 +100,73 @@ abstract class Controller
         }
     }
 
-    // protected function requireCsrf(string $tokenId, string $fieldName = '_token'): void
-    // {
-    //     $token = $_POST[$fieldName] ?? null;
-    //     if (!Csrf::isValid($tokenId, is_string($token) ? $token : null)) {
-    //         $this->abort(403, 'Token CSRF invalide.');
-    //     }
-    // }
+    protected function requireCsrf(string $tokenId, string $fieldName = '_token'): void
+    {
+        $token = $_POST[$fieldName] ?? null;
+        if (!Csrf::isValid($tokenId, is_string($token) ? $token : null)) {
+            $this->abort(403, 'Token CSRF invalide.');
+        }
+    }
 
-    // protected function getUser(): ?array
-    // {
-    //     return $this->auth()->user();
-    // }
+    protected function getUser(): ?array
+    {
+        return $this->auth()->user();
+    }
 
-    // protected function isAuthenticated(): bool
-    // {
-    //     return $this->auth()->check();
-    // }
+    protected function isAuthenticated(): bool
+    {
+        return $this->auth()->check();
+    }
 
-    // protected function isGranted(string $role): bool
-    // {
-    //     return $this->auth()->isGranted($role);
-    // }
+    protected function isGranted(string $role): bool
+    {
+        return $this->auth()->isGranted($role);
+    }
 
-    // protected function requireGuest(): void
-    // {
-    //     if ($this->isAuthenticated()) {
-    //         $this->redirect('/');
-    //     }
-    // }
+    protected function requireGuest(): void
+    {
+        if ($this->isAuthenticated()) {
+            $this->redirect('/');
+        }
+    }
 
-    // protected function redirectIfAuthenticated(string $to = '/'): void
-    // {
-    //     if ($this->isAuthenticated()) {
-    //         $this->redirect($to);
-    //     }
-    // }
+    protected function redirectIfAuthenticated(string $to = '/'): void
+    {
+        if ($this->isAuthenticated()) {
+            $this->redirect($to);
+        }
+    }
 
     protected function denyAccess(string $message = 'Accès interdit'): void
     {
         $this->abort(403, $message);
     }
 
-    // protected function requireRole(string $role): void
-    // {
-    //     if (!$this->auth()->check()) {
-    //         $this->redirect('/login');
-    //     }
+    protected function requireRole(string $role): void
+    {
+        if (!$this->auth()->check()) {
+            $this->redirect('/login');
+        }
 
-    //     if (!$this->auth()->isGranted($role)) {
-    //         http_response_code(403);
-    //         echo 'Accès interdit';
-    //         exit;
-    //     }
-    // }
+        if (!$this->auth()->isGranted($role)) {
+            http_response_code(403);
+            echo 'Accès interdit';
+            exit;
+        }
+    }
 
     protected function old(array $old, string $key, string $default = ''): string
     {
         return htmlspecialchars((string)($old[$key] ?? $default), ENT_QUOTES, 'UTF-8');
     }
 
-    // protected function isGrantedAny(array $roles): bool
-    // {
-    //     foreach ($roles as $role) {
-    //         if ($this->isGranted($role)) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
+    protected function isGrantedAny(array $roles): bool
+    {
+        foreach ($roles as $role) {
+            if ($this->isGranted($role)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

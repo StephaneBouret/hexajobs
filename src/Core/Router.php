@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Service\AuthService;
+
 final class Router
 {
     private array $routes;
@@ -47,9 +49,9 @@ final class Router
                 return;
             }
 
-            // if (!$this->isGranted($requiredRole)) {
-            //     return;
-            // }
+            if (!$this->isGranted($requiredRole)) {
+                return;
+            }
 
             [$class, $action] = $handler;
 
@@ -77,38 +79,38 @@ final class Router
         $this->notFound();
     }
 
-    // private function isGranted(?string $requiredRole): bool
-    // {
-    //     if ($requiredRole === null) {
-    //         return true;
-    //     }
+    private function isGranted(?string $requiredRole): bool
+    {
+        if ($requiredRole === null) {
+            return true;
+        }
 
-    //     $auth = new AuthService();
+        $auth = new AuthService();
 
-    //     if ($requiredRole === '@AUTH') {
-    //         if (!$auth->check()) {
-    //             $auth->rememberTargetUrl($_SERVER['REQUEST_URI'] ?? '/');
-    //             header('Location: /login');
-    //             exit();
-    //         }
+        if ($requiredRole === '@AUTH') {
+            if (!$auth->check()) {
+                $auth->rememberTargetUrl($_SERVER['REQUEST_URI'] ?? '/');
+                header('Location: /login');
+                exit();
+            }
 
-    //         return true;
-    //     }
+            return true;
+        }
 
-    //     if (!$auth->check()) {
-    //         $auth->rememberTargetUrl($_SERVER['REQUEST_URI'] ?? '/');
-    //         header('Location: /login');
-    //         exit();
-    //     }
+        if (!$auth->check()) {
+            $auth->rememberTargetUrl($_SERVER['REQUEST_URI'] ?? '/');
+            header('Location: /login');
+            exit();
+        }
 
-    //     if (!$auth->isGranted($requiredRole)) {
-    //         http_response_code(403);
-    //         require APP_ROOT . '/Views/errors/403.php';
-    //         exit();
-    //     }
+        if (!$auth->isGranted($requiredRole)) {
+            http_response_code(403);
+            require APP_ROOT . '/Views/errors/403.php';
+            exit();
+        }
 
-    //     return true;
-    // }
+        return true;
+    }
 
     private function compilePattern(string $pattern): array
     {
