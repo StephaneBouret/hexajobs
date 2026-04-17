@@ -140,10 +140,11 @@ final class Router
                 return null;
             }
 
-            if ($name === 'id') {
+            if ($name === 'id' || str_starts_with($name, 'id')) {
                 if (!ctype_digit($value)) {
                     return null;
                 }
+                
                 $args[] = (int) $value;
                 continue;
             }

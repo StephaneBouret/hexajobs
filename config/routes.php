@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Controllers\AuthController;
+use App\Controllers\CandidatureController;
 use App\Controllers\CompanyController;
 use App\Controllers\HomeController;
 use App\Controllers\OfferController;
@@ -25,4 +26,8 @@ return [
     ['GET',  '/login',                    [AuthController::class, 'login']],
     ['POST', '/login',                    [AuthController::class, 'login']],
     ['POST', '/logout',                   [AuthController::class, 'logout'], '@AUTH'],
+
+    // Candidatures
+    ['GET',  '/candidatures',             [CandidatureController::class, 'index'], 'ROLE_USER'],
+    ['POST', '/postuler/{idOffer}',       [CandidatureController::class, 'apply'], 'ROLE_USER'],
 ];

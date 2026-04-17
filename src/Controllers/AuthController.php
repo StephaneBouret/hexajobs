@@ -94,6 +94,11 @@ final class AuthController extends Controller
         $this->redirectIfAuthenticated('/');
 
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $redirect = $_GET['redirect'] ?? null;
+            if (is_string($redirect) && $redirect !== '') {
+                $this->authService->rememberTargetUrl($redirect);
+            }
+            
             $this->render('auth/login', [
                 'pageTitle' => 'Connexion',
                 'old' => [
