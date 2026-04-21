@@ -22,7 +22,7 @@ final class CandidatureController extends Controller
 
     public function index(): void
     {
-        $this->requireRole('ROLE_USER');
+        $this->requireExactRole('ROLE_USER');
 
         $user = $this->getUser();
         $items = $this->model->findByUser((int)$user['id']);
@@ -30,12 +30,13 @@ final class CandidatureController extends Controller
         $this->render('candidature/index', [
             'pageTitle' => 'Mes candidatures',
             'items' => $items,
+            'pdfUploader' => $this->uploader,
         ]);
     }
 
     public function apply(int $idOffer): void
     {
-        $this->requireRole('ROLE_USER');
+        $this->requireExactRole('ROLE_USER');
         $this->requirePost();
         $this->requireCsrf('apply_' . $idOffer);
 

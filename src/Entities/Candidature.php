@@ -19,6 +19,7 @@ final class Candidature extends Entity
 
     private string $offerTitle = '';
     private string $offerSlug = '';
+    private string $companyName = '';
 
     public function __construct()
     {
@@ -130,5 +131,16 @@ final class Candidature extends Entity
     public function getOfferSlug(): string
     {
         return $this->offerSlug;
+    }
+
+    public function getCompanyName(): string 
+    {
+        return $this->companyName;
+    }
+
+    public function setCompanyName(string $companyName): self 
+    {
+        $this->companyName = trim($companyName);
+        return $this;
     }
 }

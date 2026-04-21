@@ -38,9 +38,10 @@ final class CandidatureModel extends Model
 
     public function findByUser(int $idUser): array
     {
-        $sql = 'SELECT c.*, o.title AS title, o.slug AS slug 
+        $sql = 'SELECT c.*, o.title AS title, o.slug AS slug, comp.name AS company_name  
                 FROM candidature c 
                 INNER JOIN offer o ON o.id_offer = c.id_offer 
+                INNER JOIN company comp On comp.id_company = o.id_company  
                 WHERE c.id_user = :user 
                 ORDER BY c.created_at DESC';
 

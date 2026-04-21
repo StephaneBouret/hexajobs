@@ -11,6 +11,7 @@ define('APP_ROOT', dirname(__DIR__));
 define('PUBLIC_PATH', APP_ROOT . '/public');
 define('CV_UPLOAD_DIR', PUBLIC_PATH . '/assets/pdf/cvs');
 define('CV_PUBLIC_PREFIX', '/assets/pdf/cvs');
+define('CONFIG_PATH', APP_ROOT . '/config');
 
 /**
  * 1) Autoload Composer (PSR-4 + dépendances)
