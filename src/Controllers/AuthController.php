@@ -5,28 +5,11 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Entities\User;
-// use App\Models\LoginAttemptModel;
-use App\Models\UserModel;
-use App\Service\AuthService;
 use App\Service\FormValidator;
-use App\Service\PasswordService;
 use App\Service\PasswordValidator;
 
-final class AuthController extends Controller
+final class AuthController extends AbstractAuthController
 {
-    private UserModel $model;
-    private PasswordService $passwordService;
-    private AuthService $authService;
-    // private LoginAttemptModel $attemptModel;
-
-    public function __construct()
-    {
-        $this->model = new UserModel();
-        $this->passwordService = new PasswordService();
-        $this->authService = new AuthService();
-        // $this->attemptModel = new LoginAttemptModel();
-    }
-
     public function register(): void
     {
         $this->redirectIfAuthenticated('/');
@@ -63,7 +46,7 @@ final class AuthController extends Controller
             return;
         }
 
-        if ($this->model->emailExists($form['email'])) {
+        if ($this->userModel->emailExists($form['email'])) {
             $this->render('auth/register', [
                 'pageTitle' => 'Inscription',
                 'errors' => ['email' => 'Un compte existe déjà avec cet email.'],
@@ -79,7 +62,7 @@ final class AuthController extends Controller
             password: $this->passwordService->hash($form['password']),
         );
 
-        $userId = $this->model->create($user);
+        $userId = $this->userModel->create($user);
         $user->setIdUser($userId);
 
         $this->authService->login($user);
@@ -91,90 +74,14 @@ final class AuthController extends Controller
 
     public function login(): void
     {
-        $this->redirectIfAuthenticated('/');
-
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $redirect = $_GET['redirect'] ?? null;
-            if (is_string($redirect) && $redirect !== '') {
-                $this->authService->rememberTargetUrl($redirect);
-            }
-            
-            $this->render('auth/login', [
-                'pageTitle' => 'Connexion',
-                'old' => [
-                    'email' => '',
-                ],
-                'errors' => [],
-            ]);
-            return;
-        }
-
-        $this->requirePost();
-        $this->requireCsrf('login');
-
-        $form = $this->validateLoginForm();
-
-        if ($form['validator']->hasErrors()) {
-            $this->render('auth/login', [
-                'pageTitle' => 'Connexion',
-                'errors' => $form['validator']->getErrors(),
-                'old' => $form['old'],
-            ]);
-            return;
-        }
-
-        // $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-        // // 🚨 Vérification du nombre de tentatives
-        // $attempts = $this->attemptModel->countRecentAttempts($form['email'], $ip);
-
-        // if ($attempts >= 5) {
-        //     $this->render('auth/login', [
-        //         'pageTitle' => 'Connexion',
-        //         'errors' => [
-        //             'auth' => 'Trop de tentatives. Réessayez dans 15 minutes.'
-        //         ],
-        //         'old' => $form['old'],
-        //     ]);
-        //     return;
-        // }
-
-        $user = $this->model->findByEmail($form['email']);
-
-        if (
-            $user === null ||
-            !$this->passwordService->verify($form['password'], $user->getPassword())
-        ) {
-            // ❌ On enregistre la tentative échouée
-            // $this->attemptModel->recordFailedAttempt($form['email'], $ip);
-
-            $this->render('auth/login', [
-                'pageTitle' => 'Connexion',
-                'errors' => ['auth' => 'Email ou mot de passe incorrect.'],
-                'old' => $form['old'],
-            ]);
-            return;
-        }
-
-        // ✅ Succès → reset des tentatives
-        // $this->attemptModel->clearAttempts($form['email']);
-
-        if ($this->passwordService->needsRehash($user->getPassword())) {
-            $newHash = $this->passwordService->hash($form['password']);
-            $this->model->updatePassword($user->getIdUser(), $newHash);
-            $user->setPassword($newHash);
-        }
-
-        // $this->model->updateLastLogin($user->getId());
-
-        $this->authService->login($user);
-
-        // if ($form['remember_me']) {
-        //     $this->authService->enableRememberMe($user, $this->model);
-        // }
-
-        $redirectTo = $this->authService->pullTargetUrl('/');
-        $this->setFlash('success', 'Connexion réussie ✅');
-        $this->redirect($redirectTo);
+        $this->handleLogin(
+            requiredRole: null, // accepte USER + ADMIN
+            view: 'auth/login',
+            csrfTokenId: 'login',
+            pageTitle: 'Connexion',
+            invalidAuthMessage: 'Email ou mot de passe incorrect.',
+            successMessage: 'Connexion réussie ✅'
+        );
     }
 
     public function logout(): void
@@ -250,30 +157,6 @@ final class AuthController extends Controller
                 'firstname' => $firstname,
                 'lastname' => $lastname,
                 'email' => $email,
-            ],
-        ];
-    }
-
-    private function validateLoginForm(): array
-    {
-        $validator = new FormValidator($_POST);
-        $validator
-            ->required('email', 'L\'email est obligatoire.')
-            ->email('email', 'Le format de l\'email est invalide.')
-            ->required('password', 'Le mot de passe est obligatoire.');
-
-        $email = trim((string) ($_POST['email'] ?? ''));
-        $password = (string) ($_POST['password'] ?? '');
-        // $rememberMe = isset($_POST['remember_me']) && $_POST['remember_me'] === '1';
-
-        return [
-            'validator' => $validator,
-            'email' => $email,
-            'password' => $password,
-            // 'remember_me' => $rememberMe,
-            'old' => [
-                'email' => $email,
-                // 'remember_me' => $rememberMe ? '1' : '0',
             ],
         ];
     }

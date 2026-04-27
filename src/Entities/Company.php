@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entities;
 
+use Cocur\Slugify\Slugify;
 use DateTimeImmutable;
 
 final class Company extends Entity
@@ -25,14 +26,26 @@ final class Company extends Entity
         $this->createdAt = new DateTimeImmutable();
     }
 
+    /**
+     * Génère un slug à partir d'un texte
+     */
+    public static function slugify(string $text): string 
+    {
+        $slugify = new Slugify();
+
+        $slug = $slugify->slugify($text);
+        return $slug !== '' ? $slug : 'entreprise';
+    }
+
     public function getIdCompany(): ?int
     {
         return $this->idCompany;
     }
 
-    public function setIdCompany(int $idCompany): void
+    public function setIdCompany(int $idCompany): self
     {
         $this->idCompany = $idCompany;
+        return $this;
     }
 
     public function getName(): string
@@ -40,9 +53,10 @@ final class Company extends Entity
         return $this->name;
     }
 
-    public function setName(string $name): void
+    public function setName(string $name): self
     {
         $this->name = trim($name);
+        return $this;
     }
 
     public function getSlug(): string
@@ -50,9 +64,10 @@ final class Company extends Entity
         return $this->slug;
     }
 
-    public function setSlug(string $slug): void
+    public function setSlug(string $slug): self
     {
         $this->slug = trim($slug);
+        return $this;
     }
 
     public function getAddress(): string
@@ -60,9 +75,10 @@ final class Company extends Entity
         return $this->address;
     }
 
-    public function setAddress(string $address): void
+    public function setAddress(string $address): self
     {
         $this->address = trim($address);
+        return $this;
     }
 
     public function getPostalCode(): string
@@ -70,9 +86,10 @@ final class Company extends Entity
         return $this->postalCode;
     }
 
-    public function setPostalCode(string $postalCode): void
+    public function setPostalCode(string $postalCode): self
     {
         $this->postalCode = trim($postalCode);
+        return $this;
     }
 
     public function getCity(): string
@@ -80,9 +97,10 @@ final class Company extends Entity
         return $this->city;
     }
 
-    public function setCity(string $city): void
+    public function setCity(string $city): self
     {
         $this->city = trim($city);
+        return $this;
     }
 
     public function getUrl(): ?string
@@ -90,9 +108,11 @@ final class Company extends Entity
         return $this->url;
     }
 
-    public function setUrl(?string $url): void
+    public function setUrl(?string $url): self
     {
-        $this->url = trim((string) $url);
+        $url = $url !== null ? trim($url) : null;
+        $this->url = $url !== '' ? $url : null;
+        return $this;
     }
 
     public function getDescription(): string
@@ -100,9 +120,10 @@ final class Company extends Entity
         return $this->description;
     }
 
-    public function setDescription(string $description): void
+    public function setDescription(string $description): self
     {
         $this->description = trim($description);
+        return $this;
     }
 
     public function getSiret(): string
@@ -110,9 +131,10 @@ final class Company extends Entity
         return $this->siret;
     }
 
-    public function setSiret(string $siret): void
+    public function setSiret(string $siret): self
     {
         $this->siret = trim($siret);
+        return $this;
     }
 
     public function getCreatedAt(): ?DateTimeImmutable

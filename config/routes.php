@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Controllers\AuthController;
 use App\Controllers\CandidatureController;
+use App\Controllers\CompanyAuthController;
 use App\Controllers\CompanyController;
 use App\Controllers\HomeController;
 use App\Controllers\OfferController;
@@ -30,4 +31,11 @@ return [
     // Candidatures
     ['GET',  '/candidatures',             [CandidatureController::class, 'index'], 'ROLE_USER'],
     ['POST', '/postuler/{idOffer}',       [CandidatureController::class, 'apply'], 'ROLE_USER'],
+
+    // Espace entreprise
+    ['GET',  '/entreprise/login',         [CompanyAuthController::class, 'login']],
+    ['POST', '/entreprise/login',         [CompanyAuthController::class, 'login']],
+
+    ['GET',  '/entreprise/register',      [CompanyAuthController::class, 'register']],
+    ['POST', '/entreprise/register',      [CompanyAuthController::class, 'register']],
 ];

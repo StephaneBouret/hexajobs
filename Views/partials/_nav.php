@@ -37,6 +37,30 @@ use App\Core\Router;
             <!-- Zone authentification -->
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <?php if ($user === null): ?>
+                    <li class="nav-item dropdown">
+                        <a
+                            class="nav-link dropdown-toggle"
+                            href="#"
+                            id="companyDropdown"
+                            role="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Espace entreprise
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="companyDropdown">
+                            <li>
+                                <a class="dropdown-item" href="/entreprise/login">
+                                    Connexion entreprise
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/entreprise/register">
+                                    Inscription entreprise
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link <?= Router::isActiveRoute('/login') ? 'active' : '' ?>" href="/login">
                             Connexion

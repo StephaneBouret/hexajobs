@@ -121,4 +121,56 @@ final class CompanyModel extends Model
             $rows
         );
     }
+
+    public function siretExists(string $siret): bool
+    {
+        $sql = 'SELECT COUNT(*) FROM company WHERE siret = :siret';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':siret', $siret, PDO::PARAM_STR);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
+    public function create(Company $company): int
+    {
+        $sql = <<<SQL
+            INSERT INTO company (
+                name,
+                slug,
+                address, 
+                postal_code, 
+                city, 
+                url,
+                description,
+                siret,
+                created_at
+            ) VALUES (
+                :name,
+                :slug,
+                :address, 
+                :postal_code, 
+                :city, 
+                :url, 
+                :description, 
+                :siret,
+                :created_at
+            )
+            SQL;
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':name', $company->getName());
+        $stmt->bindValue(':slug', $company->getSlug());
+        $stmt->bindValue(':address', $company->getAddress());
+        $stmt->bindValue(':postal_code', $company->getPostalCode());
+        $stmt->bindValue(':city', $company->getCity());
+        $stmt->bindValue(':url', $company->getUrl());
+        $stmt->bindValue(':description', $company->getDescription());
+        $stmt->bindValue(':siret', $company->getSiret());
+        $stmt->bindValue(':created_at', $company->getCreatedAt()?->format('Y-m-d H:i:s'));
+
+        $stmt->execute();
+
+        return (int) $this->pdo->lastInsertId();
+    }
 }
