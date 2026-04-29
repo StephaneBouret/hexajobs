@@ -6,6 +6,7 @@ use App\Controllers\AuthController;
 use App\Controllers\CandidatureController;
 use App\Controllers\CompanyAuthController;
 use App\Controllers\CompanyController;
+use App\Controllers\CompanyOfferController;
 use App\Controllers\HomeController;
 use App\Controllers\OfferController;
 
@@ -38,4 +39,7 @@ return [
 
     ['GET',  '/entreprise/register',      [CompanyAuthController::class, 'register']],
     ['POST', '/entreprise/register',      [CompanyAuthController::class, 'register']],
+    
+    ['GET',  '/entreprise/offres/create', [CompanyOfferController::class, 'create'], 'ROLE_COMPANY'],
+    ['POST', '/entreprise/offres/create', [CompanyOfferController::class, 'create'], 'ROLE_COMPANY'],
 ];

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entities;
 
+use App\Enum\ContractType;
 use DateTimeImmutable;
 
 final class Offer extends Entity
@@ -13,7 +14,7 @@ final class Offer extends Entity
     private string $slug = '';
     private string $description = '';
     private string $location = '';
-    private string $contract = '';
+    private string $contract = ContractType::CDI->value;
     private string $salary = '';
     private string $status = '';
     private ?DateTimeImmutable $createdAt;
@@ -83,9 +84,18 @@ final class Offer extends Entity
         return $this->contract;
     }
 
-    public function setContract(string $contract): void
+    public function setContract(string $contract): self
     {
-        $this->contract = trim($contract);
+        $this->contract = ContractType::tryFrom($contract)?->value
+            ?? ContractType::CDI->value;
+
+        return $this;
+    }
+
+    public function getContractEnum(): ContractType
+    {
+        return ContractType::tryFrom($this->contract)
+            ?? ContractType::CDI;
     }
 
     public function getSalary(): string
