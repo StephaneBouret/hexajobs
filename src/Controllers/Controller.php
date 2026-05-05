@@ -148,7 +148,7 @@ abstract class Controller
             $this->auth()->rememberTargetUrl($_SERVER['REQUEST_URI'] ?? '/');
             $this->redirect('/login');
         }
-        
+
         if (!$this->auth()->isGranted($role)) {
             $this->abort(403, 'Accès interdit');
         }
@@ -169,17 +169,17 @@ abstract class Controller
         return false;
     }
 
-    protected function getConfig(string $file): array 
+    protected function getConfig(string $file): array
     {
         return require CONFIG_PATH . '/' . ltrim($file, '/');
     }
 
-    public function getNavigation(): array 
+    public function getNavigation(): array
     {
         return $this->getConfig('navigation.php');
     }
 
-    public function requireExactRole(string $role): void 
+    public function requireExactRole(string $role): void
     {
         $user = $this->getUser();
 
@@ -191,5 +191,17 @@ abstract class Controller
         if (($user['role'] ?? null) !== $role) {
             $this->abort(403, 'Accès interdit');
         }
+    }
+
+    protected function requireCompanyId(): int
+    {
+        $user = $this->getUser();
+        $idCompany = (int) ($user['id_company'] ?? 0);
+
+        if ($idCompany <= 0) {
+            $this->abort(403, 'Compte entreprise invalide.');
+        }
+
+        return $idCompany;
     }
 }

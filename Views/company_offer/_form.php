@@ -14,6 +14,9 @@ $old = $old ?? [
 ];
 $categories = $categories ?? [];
 $errors = $errors ?? [];
+$formAction = $formAction ?? '';
+$csrfTokenId = $csrfTokenId ?? '';
+$submitLabel = $submitLabel ?? 'Soumettre';
 ?>
 <?php if (!empty($errors)): ?>
     <div class="alert alert-danger">
@@ -25,11 +28,11 @@ $errors = $errors ?? [];
     </div>
 <?php endif; ?>
 
-<form method="post">
+<form method="post" action="<?= htmlspecialchars($formAction, ENT_QUOTES, 'UTF-8'); ?>">
     <input
         type="hidden"
         name="_token"
-        value="<?= htmlspecialchars(Csrf::token('create_company_offer'), ENT_QUOTES, 'UTF-8'); ?>">
+        value="<?= htmlspecialchars(\App\Core\Csrf::token($csrfTokenId), ENT_QUOTES, 'UTF-8'); ?>">
 
     <div class="mb-3">
         <label for="title" class="form-label">Titre de l'offre</label>
@@ -121,7 +124,7 @@ $errors = $errors ?? [];
 
     <div class="d-flex gap-2 mt-4">
         <button class="btn btn-primary">
-            Publier l'offre
+            <?= htmlspecialchars($submitLabel, ENT_QUOTES, 'UTF-8'); ?>
         </button>
 
         <a href="/entreprise/offres" class="btn btn-outline-secondary">

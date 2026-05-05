@@ -6,5 +6,11 @@
         </p>
     </div>
 
-    <?php require VIEW_PATH . '/company_offer/_form.php'; ?>
+    <?php
+    $formAction = '/entreprise/offres/create';
+    $csrfTokenId = 'create_company_offer';
+    $submitLabel = 'Publier l\'offre';
+
+    require VIEW_PATH . '/company_offer/_form.php';
+    ?>
 </section>

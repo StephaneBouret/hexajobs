@@ -22,6 +22,38 @@ final class CompanyOfferController extends Controller
         $this->categoryModel = new CategoryModel();
     }
 
+    public function index(): void
+    {
+        $this->requireExactRole('ROLE_COMPANY');
+
+        $idCompany = $this->requireCompanyId();
+
+        $offers = $this->offerModel->findByCompany($idCompany);
+
+        $this->render('company_offer/index', [
+            'pageTitle' => 'Mes offres',
+            'offers' => $offers,
+        ]);
+    }
+
+    public function showById(int $idOffer): void
+    {
+        $this->requireExactRole('ROLE_COMPANY');
+
+        $idCompany = $this->requireCompanyId();
+
+        $offer = $this->offerModel->findOneByIdAndCompany($idOffer, $idCompany);
+
+        if ($offer === null) {
+            $this->abort(404, 'Offre introuvable ou accès interdit.');
+        }
+
+        $this->render('company_offer/show', [
+            'pageTitle' => $offer->getTitle(),
+            'offer' => $offer,
+        ]);
+    }
+
     public function create(): void
     {
         $this->requireExactRole('ROLE_COMPANY');
@@ -56,18 +88,104 @@ final class CompanyOfferController extends Controller
             return;
         }
 
-        $user = $this->getUser();
-        $idCompany = (int) ($user['id_company'] ?? 0);
-
-        if ($idCompany <= 0) {
-            $this->abort(403, 'Compte entreprise invalide.');
-        }
+        $idCompany = $this->requireCompanyId();
 
         $offer = $this->buildEntity($form, $idCompany);
         $created = $this->offerModel->insert($offer);
 
         $this->setFlash('success', 'Offre publiée avec succès ✅');
-        $this->redirect('/offres/' . $created->getSlug());
+        $this->redirect('/entreprise/offres');
+    }
+
+    public function edit(int $idOffer): void
+    {
+        $this->requireExactRole('ROLE_COMPANY');
+
+        $idCompany = $this->requireCompanyId();
+
+        $offer = $this->offerModel->findOneByIdAndCompany($idOffer, $idCompany);
+
+        if ($offer === null) {
+            $this->abort(404, 'Offre introuvable ou accès interdit.');
+        }
+
+        $categories = $this->categoryModel->findAll();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $this->render('company_offer/edit', [
+                'pageTitle' => 'Modifier une offre',
+                'offer' => $offer,
+                'categories' => $categories,
+                'errors' => [],
+                'old' => [
+                    'title' => $offer->getTitle(),
+                    'description' => $offer->getDescription(),
+                    'location' => $offer->getLocation(),
+                    'contract' => $offer->getContract(),
+                    'salary' => $offer->getSalary(),
+                    'status' => $offer->getStatus(),
+                    'id_category' => (string) $offer->getIdCategory(),
+                ],
+            ]);
+
+            return;
+        }
+
+        $this->requirePost();
+        $this->requireCsrf('edit_company_offer_' . $idOffer);
+
+        $form = $this->validateOfferForm();
+
+        $errors = array_merge(
+            $form['validator']->getErrors(),
+            $form['extraErrors']
+        );
+
+        if (!empty($errors)) {
+            $this->render('company_offer/edit', [
+                'pageTitle' => 'Modifier une offre',
+                'offer' => $offer,
+                'categories' => $categories,
+                'errors' => $errors,
+                'old' => $form['old'],
+            ]);
+
+            return;
+        }
+
+        $updatedOffer = $this->buildEntity($form, $idCompany, $idOffer);
+
+        /**
+         * Important :
+         * Si tu régénères toujours le slug, l'URL publique change à chaque modification du titre.
+         */
+        $updated = $this->offerModel->updateByCompany($idOffer, $idCompany, $updatedOffer);
+
+        if ($updated === null) {
+            $this->abort(500, 'Modification impossible.');
+        }
+
+        $this->setFlash('success', 'Offre modifiée avec succès ✅');
+        $this->redirect('/entreprise/offres/' . $idOffer);
+    }
+
+    public function delete(int $idOffer): void
+    {
+        $this->requireExactRole('ROLE_COMPANY');
+
+        $this->requirePost();
+        $this->requireCsrf('delete_company_offer_' . $idOffer);
+
+        $idCompany = $this->requireCompanyId();
+
+        $deleted = $this->offerModel->deleteByCompany($idOffer, $idCompany);
+
+        $this->setFlash(
+            $deleted ? 'success' : 'warning',
+            $deleted ? 'Offre supprimée avec succès ✅' : 'Suppression impossible.'
+        );
+
+        $this->redirect('/entreprise/offres');
     }
 
     private function validateOfferForm(): array
@@ -129,7 +247,7 @@ final class CompanyOfferController extends Controller
         ];
     }
 
-    private function buildEntity(array $form, int $idCompany): Offer
+    private function buildEntity(array $form, int $idCompany, ?int $ignoreOfferId = null): Offer
     {
         $slugify = new Slugify();
 
@@ -138,13 +256,13 @@ final class CompanyOfferController extends Controller
 
         $offer = new Offer();
         $offer->setTitle($form['title']);
-        $offer->setSlug($this->offerModel->makeUniqueSlug($baseSlug));
+        $offer->setSlug($this->offerModel->makeUniqueSlug($baseSlug, $ignoreOfferId));
         $offer->setDescription($form['description']);
         $offer->setLocation($form['location']);
         $offer->setContract($form['contract']);
         $offer->setSalary($form['salary']);
         $offer->setStatus($form['status']);
-        $offer->setIdCategory($form['id_category']);
+        $offer->setIdCategory((int) $form['id_category']);
         $offer->setIdCompany($idCompany);
 
         return $offer;
