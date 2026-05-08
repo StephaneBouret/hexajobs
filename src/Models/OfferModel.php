@@ -91,13 +91,17 @@ final class OfferModel extends Model
     public function findByCompany(int $idCompany): array
     {
         $sql = <<<SQL
-            SELECT o.*,
+            SELECT
+                o.*,
                 c.name AS company_name,
-                cat.name AS category_name
+                cat.name AS category_name,
+                COUNT(ca.id_candidature) AS candidatures_count
             FROM offer o
             INNER JOIN company c ON c.id_company = o.id_company
             INNER JOIN category cat ON cat.id_category = o.id_category
+            LEFT JOIN candidature ca ON ca.id_offer = o.id_offer
             WHERE o.id_company = :id_company
+            GROUP BY o.id_offer
             ORDER BY o.created_at DESC, o.id_offer DESC
         SQL;
 

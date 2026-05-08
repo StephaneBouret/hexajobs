@@ -42,6 +42,7 @@
                                 <th>Contrat</th>
                                 <th>Statut</th>
                                 <th>Date</th>
+                                <th>Candidatures</th>
                                 <th class="text-end pe-4">Actions</th>
                             </tr>
                         </thead>
@@ -89,17 +90,35 @@
                                         <?php endif; ?>
                                     </td>
 
+                                    <td>
+                                        <?php $count = $offer->getCandidaturesCount(); ?>
+
+                                        <?php if ($count > 0): ?>
+                                            <a
+                                                href="/entreprise/offres/<?= (int) $offer->getIdOffer(); ?>/candidatures"
+                                                class="badge text-bg-primary text-decoration-none">
+                                                <i class="bi bi-people me-1"></i>
+                                                <?= $count; ?>
+                                            </a>
+                                        <?php else: ?>
+                                            <span class="badge text-bg-light border text-muted">
+                                                <i class="bi bi-people me-1"></i>
+                                                Aucune
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
+
                                     <td class="text-end pe-4">
-                                        <div class="btn-group btn-group-sm" role="group">
+                                        <div class="d-flex align-items-center justify-content-end gap-1" role="group">
                                             <a
                                                 href="/entreprise/offres/<?= (int) $offer->getIdOffer(); ?>"
-                                                class="btn btn-outline-secondary">
+                                                class="btn btn-sm btn-outline-secondary">
                                                 Voir
                                             </a>
 
                                             <a
                                                 href="/entreprise/offres/<?= (int) $offer->getIdOffer(); ?>/edit"
-                                                class="btn btn-outline-primary">
+                                                class="btn btn-sm btn-outline-primary">
                                                 Modifier
                                             </a>
 
@@ -113,7 +132,7 @@
                                                     name="_token"
                                                     value="<?= htmlspecialchars(\App\Core\Csrf::token('delete_company_offer_' . $offer->getIdOffer()), ENT_QUOTES, 'UTF-8'); ?>">
 
-                                                <button class="btn btn-outline-danger">
+                                                <button class="btn btn-sm btn-outline-danger">
                                                     Supprimer
                                                 </button>
                                             </form>

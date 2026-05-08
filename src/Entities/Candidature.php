@@ -21,6 +21,10 @@ final class Candidature extends Entity
     private string $offerSlug = '';
     private string $companyName = '';
 
+    private string $userFirstname = '';
+    private string $userLastname = '';
+    private string $userEmail = '';
+
     public function __construct()
     {
         $this->createdAt = new DateTimeImmutable();
@@ -133,14 +137,52 @@ final class Candidature extends Entity
         return $this->offerSlug;
     }
 
-    public function getCompanyName(): string 
+    public function getCompanyName(): string
     {
         return $this->companyName;
     }
 
-    public function setCompanyName(string $companyName): self 
+    public function setCompanyName(string $companyName): self
     {
         $this->companyName = trim($companyName);
         return $this;
+    }
+
+    public function getUserFirstname(): string
+    {
+        return $this->userFirstname;
+    }
+
+    public function setUserFirstname(string $firstname): self
+    {
+        $this->userFirstname = trim($firstname);
+        return $this;
+    }
+
+    public function getUserLastname(): string
+    {
+        return $this->userLastname;
+    }
+
+    public function setUserLastname(string $lastname): self
+    {
+        $this->userLastname = trim($lastname);
+        return $this;
+    }
+
+    public function getUserEmail(): string
+    {
+        return $this->userEmail;
+    }
+
+    public function setUserEmail(string $email): self
+    {
+        $this->userEmail = trim($email);
+        return $this;
+    }
+
+    public function getUserFullName(): string
+    {
+        return trim($this->userFirstname . ' ' . $this->userLastname);
     }
 }

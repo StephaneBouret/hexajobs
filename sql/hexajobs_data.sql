@@ -180,3 +180,11 @@ INSERT INTO offer (title, slug, description, location, contract, salary, status,
     5,
     5
 );
+
+-- ============================================
+-- INSERTION DES USERS
+-- ============================================
+INSERT INTO user (firstname, lastname, email, password, role, id_company) VALUES
+('User', 'One', 'user1@gmail.com', '$2y$12$OfFBHo99riIOS5UFnLM/WuGxl6xJ4wXRVmgKEUV0fVKo3i0SppPpi', 'ROLE_USER', NULL),
+('User', 'Two', 'user2@gmail.com', '$2y$12$OfFBHo99riIOS5UFnLM/WuGxl6xJ4wXRVmgKEUV0fVKo3i0SppPpi', 'ROLE_USER', NULL),
+('User', 'Three', 'user3@gmail.com', '$2y$12$OfFBHo99riIOS5UFnLM/WuGxl6xJ4wXRVmgKEUV0fVKo3i0SppPpi', 'ROLE_USER', NULL);

@@ -24,6 +24,8 @@ final class Offer extends Entity
     private string $companyName = '';
     private string $categoryName = '';
 
+    private int $candidaturesCount = 0;
+
     public function __construct()
     {
         $this->createdAt = new DateTimeImmutable();
@@ -169,5 +171,16 @@ final class Offer extends Entity
     public function setCategoryName(string $categoryName): void
     {
         $this->categoryName = trim($categoryName);
+    }
+
+    public function getCandidaturesCount(): int
+    {
+        return $this->candidaturesCount;
+    }
+
+    public function setCandidaturesCount(int|string $count): self
+    {
+        $this->candidaturesCount = (int) $count;
+        return $this;
     }
 }
