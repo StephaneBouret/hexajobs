@@ -34,11 +34,17 @@ final class OfferController extends Controller
             $this->abort(404);
         }
 
+        $user = $this->getUser();
+
+        $displayApplicationSection = true;
+
+        if ($user !== null && ($user['role'] ?? null) === 'ROLE_ADMIN') {
+            $displayApplicationSection = false;
+        }
+
         $hasApplied = false;
 
         if ($this->isAuthenticated()) {
-            $user = $this->getUser();
-
             if ($user !== null) {
                 $candidatureModel = new CandidatureModel();
                 $hasApplied = $candidatureModel->alreadyApplied((int) $user['id'], (int) $offer->getIdOffer());
@@ -50,6 +56,7 @@ final class OfferController extends Controller
             'offer' => $offer,
             'hasApplied' => $hasApplied,
             'oldApplication' => $this->pullOldApplication($slug),
+            'displayApplicationSection' => $displayApplicationSection,
         ]);
     }
 

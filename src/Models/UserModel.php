@@ -92,4 +92,27 @@ final class UserModel extends Model
 
         return $stmt->execute();
     }
+
+    /**
+     * @return User[] 
+     */
+    public function findAllForAdmin(): array
+    {
+        $sql = <<<SQL
+            SELECT 
+                u.*, 
+                c.name AS company_name 
+            FROM user u 
+            LEFT JOIN company c ON c.id_company = u.id_company 
+            ORDER BY u.created_at, u.id_user DESC
+            SQL;
+
+        $stmt = $this->pdo->query($sql);
+        $rows = $stmt->fetchAll();
+
+        return array_map(
+            static fn(array $row): User => User::createAndHydrate($row), 
+            $rows
+        );
+    }
 }

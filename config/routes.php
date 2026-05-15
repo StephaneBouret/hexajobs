@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Controllers\Admin\AdminCategoryController;
+use App\Controllers\Admin\AdminCompanyController;
+use App\Controllers\Admin\AdminOfferController;
+use App\Controllers\Admin\AdminUserController;
+use App\Controllers\Admin\DashboardController;
 use App\Controllers\AuthController;
 use App\Controllers\CandidatureController;
 use App\Controllers\CompanyAuthController;
@@ -55,4 +60,18 @@ return [
     ['GET', '/entreprise/candidatures/{idCandidature}',          [CompanyCandidatureController::class, 'show'], 'ROLE_COMPANY'],
     ['POST', '/entreprise/candidatures/{idCandidature}/retenir', [CompanyCandidatureController::class, 'accept'], 'ROLE_COMPANY'],
     ['POST', '/entreprise/candidatures/{idCandidature}/refuser', [CompanyCandidatureController::class, 'reject'], 'ROLE_COMPANY'],
+
+    // Admin
+    ['GET', '/admin',                                            [DashboardController::class, 'index'], 'ROLE_ADMIN'],
+    ['GET', '/admin/users',                                      [AdminUserController::class, 'index'], 'ROLE_ADMIN'],
+    ['GET', '/admin/companies',                                  [AdminCompanyController::class, 'index'], 'ROLE_ADMIN'],
+    ['GET', '/admin/offers',                                     [AdminOfferController::class, 'index'], 'ROLE_ADMIN'],
+    ['POST', '/admin/offers/{idOffer}/disable',                  [AdminOfferController::class, 'disable'], 'ROLE_ADMIN'],
+    ['POST', '/admin/offers/{idOffer}/enable',                   [AdminOfferController::class, 'enable'],  'ROLE_ADMIN'],
+    ['GET',  '/admin/categories',                                [AdminCategoryController::class, 'index'],  'ROLE_ADMIN'],
+    ['GET',  '/admin/categories/create',                         [AdminCategoryController::class, 'create'],  'ROLE_ADMIN'],
+    ['POST', '/admin/categories/create',                         [AdminCategoryController::class, 'create'],  'ROLE_ADMIN'],
+    ['GET',  '/admin/categories/{idCategory}/edit',              [AdminCategoryController::class, 'edit'],  'ROLE_ADMIN'],
+    ['POST', '/admin/categories/{idCategory}/edit',              [AdminCategoryController::class, 'edit'],  'ROLE_ADMIN'],
+    ['POST', '/admin/categories/{idCategory}/delete',            [AdminCategoryController::class, 'delete'],  'ROLE_ADMIN'],
 ];

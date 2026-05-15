@@ -295,4 +295,44 @@ final class OfferModel extends Model
 
         return (int) $stmt->fetchColumn() > 0;
     }
+
+    /**
+     * @return Offer[]
+     */
+    public function findAllForAdmin(): array
+    {
+        $sql = <<<SQL
+            SELECT
+                o.*,
+                c.name AS company_name,
+                cat.name AS category_name,
+                COUNT(ca.id_candidature) AS candidatures_count
+            FROM offer o
+            INNER JOIN company c ON c.id_company = o.id_company
+            INNER JOIN category cat ON cat.id_category = o.id_category
+            LEFT JOIN candidature ca ON ca.id_offer = o.id_offer
+            GROUP BY o.id_offer
+            ORDER BY o.created_at DESC, o.id_offer DESC
+        SQL;
+
+        $stmt = $this->pdo->query($sql);
+        $rows = $stmt->fetchAll();
+
+        return array_map(
+            static fn(array $row): Offer => Offer::createAndHydrate($row),
+            $rows
+        );
+    }
+
+    public function updateStatus(int $idOffer, string $status): bool
+    {
+        $sql = 'UPDATE offer SET status = :status WHERE id_offer = :id_offer';
+
+        $stmt = $this->pdo->prepare($sql);
+
+        return $stmt->execute([
+            'status' => $status,
+            'id_offer' => $idOffer,
+        ]);
+    }
 }

@@ -9,6 +9,7 @@ final class Category extends Entity
     private ?int $idCategory = null;
     private string $name = '';
     private string $slug = '';
+    private int $offersCount = 0;
 
     public function getIdCategory(): ?int
     {
@@ -41,7 +42,19 @@ final class Category extends Entity
 
     public function setSlug(string $slug): self
     {
-        $this->name = trim($slug);
+        $this->slug = trim($slug);
+
+        return $this;
+    }
+
+    public function getOffersCount(): int
+    {
+        return $this->offersCount;
+    }
+
+    public function setOffersCount(int|string $offersCount): self
+    {
+        $this->offersCount = (int) $offersCount;
 
         return $this;
     }

@@ -1,3 +1,7 @@
+<?php
+
+/** @var \App\Entities\Company $company */
+?>
 <section class="py-4">
     <a href="/entreprises" class="btn btn-outline-secondary mb-3">
         <i class="bi bi-arrow-left me-2"></i>Retour aux entreprises

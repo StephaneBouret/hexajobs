@@ -18,6 +18,8 @@ final class User extends Entity
     private ?DateTimeImmutable $createdAt = null;
     private ?int $idCompany = null;
 
+    private string $companyName = '';
+
     public function __construct()
     {
         $this->createdAt = new DateTimeImmutable();
@@ -140,5 +142,16 @@ final class User extends Entity
             'role' => $this->role,
             'id_company' => $this->idCompany,
         ];
+    }
+
+    public function getCompanyName(): string
+    {
+        return $this->companyName;
+    }
+
+    public function setCompanyName(?string $companyName): self
+    {
+        $this->companyName = trim((string) $companyName);
+        return $this;
     }
 }

@@ -173,4 +173,28 @@ final class CompanyModel extends Model
 
         return (int) $this->pdo->lastInsertId();
     }
+
+    /**
+     * @return Company[]
+     */
+    public function findAllForAdmin(): array
+    {
+        $sql = <<<SQL
+            SELECT
+                c.*,
+                COUNT(o.id_offer) AS offers_count
+            FROM company c
+            LEFT JOIN offer o ON o.id_company = c.id_company
+            GROUP BY c.id_company
+            ORDER BY c.created_at DESC, c.id_company DESC
+        SQL;
+
+        $stmt = $this->pdo->query($sql);
+        $rows = $stmt->fetchAll();
+
+        return array_map(
+            static fn(array $row): Company => Company::createAndHydrate($row),
+            $rows
+        );
+    }
 }
