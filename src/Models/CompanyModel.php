@@ -174,6 +174,61 @@ final class CompanyModel extends Model
         return (int) $this->pdo->lastInsertId();
     }
 
+    public function findOneById(int $idCompany): ?Company
+    {
+        $sql = <<<SQL
+            SELECT
+                c.*,
+                COUNT(o.id_offer) AS offers_count
+            FROM company c
+            LEFT JOIN offer o ON o.id_company = c.id_company
+            WHERE c.id_company = :id_company
+            GROUP BY c.id_company
+            LIMIT 1
+        SQL;
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':id_company', $idCompany, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $row = $stmt->fetch();
+
+        return $row ? Company::createAndHydrate($row) : null;
+    }
+
+    public function updateProfile(int $idCompany, Company $company): ?Company
+    {
+        $sql = <<<SQL
+            UPDATE company
+            SET
+                name = :name,
+                slug = :slug,
+                address = :address,
+                postal_code = :postal_code,
+                city = :city,
+                url = :url,
+                description = :description,
+                siret = :siret
+            WHERE id_company = :id_company
+        SQL;
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            'name' => $company->getName(),
+            'slug' => $company->getSlug(),
+            'address' => $company->getAddress(),
+            'postal_code' => $company->getPostalCode(),
+            'city' => $company->getCity(),
+            'url' => $company->getUrl(),
+            'description' => $company->getDescription(),
+            'siret' => $company->getSiret(),
+            'id_company' => $idCompany,
+        ]);
+
+        return $this->findOneById($idCompany);
+    }
+
     /**
      * @return Company[]
      */

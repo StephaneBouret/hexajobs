@@ -224,7 +224,6 @@ final class OfferModel extends Model
                 location = :location, 
                 contract = :contract, 
                 salary = :salary, 
-                status = :status, 
                 id_category = :id_category 
             WHERE id_offer = :id_offer
               AND id_company = :id_company
@@ -239,7 +238,6 @@ final class OfferModel extends Model
             'location' => $offer->getLocation(),
             'contract' => $offer->getContract(),
             'salary' => $offer->getSalary(),
-            'status' => $offer->getStatus(),
             'id_category' => $offer->getIdCategory(),
             'id_offer' => $idOffer,
             'id_company' => $idCompany,

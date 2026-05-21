@@ -9,7 +9,6 @@ $old = $old ?? [
     'location' => '',
     'contract' => 'CDI',
     'salary' => '',
-    'status' => 'active',
     'id_category' => '',
 ];
 $categories = $categories ?? [];
@@ -97,7 +96,7 @@ $submitLabel = $submitLabel ?? 'Soumettre';
     </div>
 
     <div class="row">
-        <div class="col-md-6 mb-3">
+        <div class="mb-3">
             <label for="salary" class="form-label">Rémunération</label>
             <input
                 type="text"
@@ -107,18 +106,6 @@ $submitLabel = $submitLabel ?? 'Soumettre';
                 placeholder="Ex : 35 000 - 42 000 €"
                 value="<?= $this->old($old, 'salary'); ?>"
                 required>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label for="status" class="form-label">Statut</label>
-            <select id="status" name="status" class="form-select">
-                <option value="active" <?= ($old['status'] ?? '') === 'active' ? 'selected' : ''; ?>>
-                    Active
-                </option>
-                <option value="inactive" <?= ($old['status'] ?? '') === 'inactive' ? 'selected' : ''; ?>>
-                    Inactive
-                </option>
-            </select>
         </div>
     </div>
 

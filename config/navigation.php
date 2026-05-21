@@ -35,6 +35,12 @@ return [
         'icon' => 'bi-briefcase-fill',
         'roles' => ['ROLE_COMPANY'],
     ],
+    [
+        'label' => 'Mon entreprise',
+        'url' => '/entreprise/profil',
+        'icon' => 'bi-building',
+        'roles' => ['ROLE_COMPANY'],
+    ],
 
     // ADMIN
     [

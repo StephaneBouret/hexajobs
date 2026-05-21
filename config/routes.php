@@ -13,6 +13,7 @@ use App\Controllers\CompanyAuthController;
 use App\Controllers\CompanyCandidatureController;
 use App\Controllers\CompanyController;
 use App\Controllers\CompanyOfferController;
+use App\Controllers\CompanyProfileController;
 use App\Controllers\HomeController;
 use App\Controllers\OfferController;
 
@@ -60,6 +61,9 @@ return [
     ['GET', '/entreprise/candidatures/{idCandidature}',          [CompanyCandidatureController::class, 'show'], 'ROLE_COMPANY'],
     ['POST', '/entreprise/candidatures/{idCandidature}/retenir', [CompanyCandidatureController::class, 'accept'], 'ROLE_COMPANY'],
     ['POST', '/entreprise/candidatures/{idCandidature}/refuser', [CompanyCandidatureController::class, 'reject'], 'ROLE_COMPANY'],
+
+    ['GET',  '/entreprise/profil',                               [CompanyProfileController::class, 'edit'], 'ROLE_COMPANY'],
+    ['POST', '/entreprise/profil',                               [CompanyProfileController::class, 'edit'], 'ROLE_COMPANY'],
 
     // Admin
     ['GET', '/admin',                                            [DashboardController::class, 'index'], 'ROLE_ADMIN'],

@@ -123,7 +123,6 @@ final class CompanyOfferController extends Controller
                     'location' => $offer->getLocation(),
                     'contract' => $offer->getContract(),
                     'salary' => $offer->getSalary(),
-                    'status' => $offer->getStatus(),
                     'id_category' => (string) $offer->getIdCategory(),
                 ],
             ]);
@@ -208,7 +207,6 @@ final class CompanyOfferController extends Controller
         $location = trim((string) ($_POST['location'] ?? ''));
         $contract = trim((string) ($_POST['contract'] ?? ContractType::CDI->value));
         $salary = trim((string) ($_POST['salary'] ?? ''));
-        $status = trim((string) ($_POST['status'] ?? 'active'));
         $idCategory = (int) ($_POST['id_category'] ?? 0);
 
         $extraErrors = [];
@@ -221,10 +219,6 @@ final class CompanyOfferController extends Controller
             $extraErrors['contract'] = 'Le type de contrat est invalide.';
         }
 
-        if (!in_array($status, ['active', 'inactive'], true)) {
-            $extraErrors['status'] = 'Le statut est invalide.';
-        }
-
         return [
             'validator' => $validator,
             'extraErrors' => $extraErrors,
@@ -233,7 +227,6 @@ final class CompanyOfferController extends Controller
             'location' => $location,
             'contract' => $contract,
             'salary' => $salary,
-            'status' => $status,
             'id_category' => $idCategory,
             'old' => [
                 'title' => $title,
@@ -241,7 +234,6 @@ final class CompanyOfferController extends Controller
                 'location' => $location,
                 'contract' => $contract,
                 'salary' => $salary,
-                'status' => $status,
                 'id_category' => (string) $idCategory,
             ],
         ];
@@ -261,7 +253,7 @@ final class CompanyOfferController extends Controller
         $offer->setLocation($form['location']);
         $offer->setContract($form['contract']);
         $offer->setSalary($form['salary']);
-        $offer->setStatus($form['status']);
+        $offer->setStatus('active');
         $offer->setIdCategory((int) $form['id_category']);
         $offer->setIdCompany($idCompany);
 
@@ -276,7 +268,6 @@ final class CompanyOfferController extends Controller
             'location' => '',
             'contract' => ContractType::CDI->value,
             'salary' => '',
-            'status' => 'active',
             'id_category' => '',
         ];
     }
