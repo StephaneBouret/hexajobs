@@ -74,4 +74,8 @@ return [
     ['GET',  '/admin/categories/{idCategory}/edit',              [AdminCategoryController::class, 'edit'],  'ROLE_ADMIN'],
     ['POST', '/admin/categories/{idCategory}/edit',              [AdminCategoryController::class, 'edit'],  'ROLE_ADMIN'],
     ['POST', '/admin/categories/{idCategory}/delete',            [AdminCategoryController::class, 'delete'],  'ROLE_ADMIN'],
+
+    // Search
+    ['GET', '/api/offres/suggestions/titres',                    [OfferController::class, 'suggestTitles']],
+    ['GET', '/api/offres/suggestions/villes',                    [OfferController::class, 'suggestLocations']],
 ];

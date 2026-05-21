@@ -40,6 +40,62 @@
         </div>
     </div>
 </section>
+<section class="py-4 py-lg-5">
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+            <form method="get" action="/offres" class="row g-3 align-items-end" data-offer-search-form>
+                <div class="col-lg-5 position-relative">
+                    <label for="home-search-q" class="form-label fw-bold text-uppercase small">Quoi ?</label>
+                    <input
+                        type="search"
+                        id="home-search-q"
+                        name="q"
+                        class="form-control form-control-lg"
+                        placeholder="Métier, titre..."
+                        autocomplete="off"
+                        data-autocomplete-input
+                        data-autocomplete-url="/api/offres/suggestions/titres"
+                        data-autocomplete-target="#home-title-suggestions">
+
+                    <div
+                        id="home-title-suggestions"
+                        class="list-group position-absolute w-100 shadow-sm d-none"
+                        style="z-index: 1000;"
+                        data-autocomplete-results></div>
+                </div>
+
+                <div class="col-lg-5 position-relative">
+                    <label for="home-search-location" class="form-label fw-bold text-uppercase small">Où ?</label>
+                    <input
+                        type="search"
+                        id="home-search-location"
+                        name="location"
+                        class="form-control form-control-lg"
+                        placeholder="Ville..."
+                        autocomplete="off"
+                        data-autocomplete-input
+                        data-autocomplete-url="/api/offres/suggestions/villes"
+                        data-autocomplete-target="#home-location-suggestions">
+
+                    <div
+                        id="home-location-suggestions"
+                        class="list-group position-absolute w-100 shadow-sm d-none"
+                        style="z-index: 1000;"
+                        data-autocomplete-results></div>
+                </div>
+
+                <div class="col-lg-2">
+                    <button class="btn btn-dark btn-lg w-100">
+                        <i class="bi bi-search"></i>
+                        Rechercher
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+
 
 <section class="py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

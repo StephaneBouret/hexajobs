@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Entities\Offer;
+use App\Enum\ContractType;
 use PDO;
 
 final class OfferModel extends Model
@@ -334,5 +335,145 @@ final class OfferModel extends Model
             'status' => $status,
             'id_offer' => $idOffer,
         ]);
+    }
+
+    /**
+     * @return Offer[]
+     */
+    public function searchActive(array $criteria = [], int $limit = 10, int $offset = 0): array
+    {
+        $sql = <<<SQL
+            SELECT
+                o.*,
+                c.name AS company_name,
+                cat.name AS category_name
+            FROM offer o
+            INNER JOIN company c ON c.id_company = o.id_company
+            INNER JOIN category cat ON cat.id_category = o.id_category 
+            WHERE o.status = :status
+        SQL;
+
+        $params = [
+            'status' => 'active',
+        ];
+
+        $this->applyActiveSearchCriteria($sql, $params, $criteria);
+
+        $sql .= ' ORDER BY o.created_at DESC, o.id_offer DESC LIMIT :limit OFFSET :offset';
+
+        $stmt = $this->pdo->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue(':' . $key, $value);
+        }
+
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        $rows = $stmt->fetchAll();
+
+        return array_map(
+            static fn(array $row): Offer => Offer::createAndHydrate($row),
+            $rows
+        );
+    }
+
+    public function countActiveSearch(array $criteria = []): int
+    {
+        $sql = <<<SQL
+            SELECT COUNT(*)
+            FROM offer o
+            WHERE o.status = :status
+        SQL;
+
+        $params = ['status' => 'active'];
+
+        $this->applyActiveSearchCriteria($sql, $params, $criteria);
+
+        $stmt = $this->pdo->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue(':' . $key, $value);
+        }
+
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function suggestTitles(string $query, int $limit = 6): array
+    {
+        $sql = <<<SQL
+            SELECT DISTINCT title 
+            FROM offer 
+            WHERE status = :status
+              AND title LIKE :query 
+            ORDER BY title ASC 
+            LIMIT :limit
+        SQL;
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':status', 'active', PDO::PARAM_STR);
+        $stmt->bindValue(':query', '%' . $query . '%', PDO::PARAM_STR);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    public function suggestLocations(string $query, int $limit = 6): array
+    {
+        $sql = <<<SQL
+            SELECT DISTINCT location
+            FROM offer
+            WHERE status = :status
+            AND location LIKE :query
+            ORDER BY location ASC
+            LIMIT :limit
+        SQL;
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':status', 'active', PDO::PARAM_STR);
+        $stmt->bindValue(':query', '%' . $query . '%', PDO::PARAM_STR);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    private function applyActiveSearchCriteria(string &$sql, array &$params, array $criteria): void
+    {
+        if (!empty($criteria['q'])) {
+            $sql .= ' AND o.title LIKE :q';
+            $params['q'] = '%' . $criteria['q'] . '%';
+        }
+
+        if (!empty($criteria['location'])) {
+            $sql .= ' AND o.location LIKE :location';
+            $params['location'] = '%' . $criteria['location'] . '%';
+        }
+
+        if (!empty($criteria['contracts']) && is_array($criteria['contracts'])) {
+            $allowed = array_map(
+                static fn(ContractType $type): string => $type->value,
+                ContractType::cases()
+            );
+
+            $contracts = array_values(array_intersect($criteria['contracts'], $allowed));
+
+            if ($contracts !== []) {
+                $placeholders = [];
+
+                foreach ($contracts as $index => $contract) {
+                    $key = 'contract_' . $index;
+                    $placeholders[] = ':' . $key;
+                    $params[$key] = $contract;
+                }
+
+                $sql .= ' AND o.contract IN (' . implode(', ', $placeholders) . ')';
+            }
+        }
     }
 }

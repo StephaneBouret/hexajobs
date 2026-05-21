@@ -1,4 +1,8 @@
 <?php
+/** @var string $content */
+
+$content = $content ?? '';
+
 $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
 $currentPath = rtrim($currentPath, '/') ?: '/';
 
@@ -37,7 +41,7 @@ $pageTitle = $pageTitle ?? $title ?? 'Hexajobs';
 
     <?php require VIEW_PATH . '/partials/_footer.php'; ?>
 
-    <!-- <script type="module" src="/assets/js/app.js"></script> -->
+    <script type="module" src="/assets/js/app.js"></script>
     <!-- Vendor JS Files -->
     <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
